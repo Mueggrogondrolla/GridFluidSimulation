@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Grid">
+      <UniqueIdentifier>{c9145589-494e-4ce8-b7fb-e97498123dce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Grid">
+      <UniqueIdentifier>{275ce436-0ac2-4d31-9973-c7b7500f3c62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\States">
+      <UniqueIdentifier>{e6b40164-8ef4-4074-8133-66e209102ee5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States">
+      <UniqueIdentifier>{3790fd08-10b2-4465-b0d4-5a9ed23152cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Grid\GridHelpers">
+      <UniqueIdentifier>{bfc7f4cf-617d-4f26-bf89-39fca3fae9f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Grid\DataPoints">
+      <UniqueIdentifier>{a57f3793-3102-404f-81f0-ff7fd00973b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Grid\GridHelpers">
+      <UniqueIdentifier>{8fd56a99-50f0-4744-8859-03926097be29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Grid\GridTypes">
+      <UniqueIdentifier>{e6532ca7-0355-491a-aa61-82e2da2507a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Grid\GridTypes">
+      <UniqueIdentifier>{351c10cf-8d48-4a76-90cc-4e737e30a82c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GridRenderer.cpp">
+      <Filter>Source Files\Grid\GridHelpers</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGridRenderState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="GridManager.cpp">
+      <Filter>Source Files\Grid\GridHelpers</Filter>
+    </ClCompile>
+    <ClCompile Include="FloatFluidGrid.cpp">
+      <Filter>Source Files\Grid\GridTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="VectorFluidGrid.cpp">
+      <Filter>Source Files\Grid\GridTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="GridBuilder.cpp">
+      <Filter>Source Files\Grid\GridHelpers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GridRenderer.h">
+      <Filter>Header Files\Grid\GridHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="TestGridRenderState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="GridManager.h">
+      <Filter>Header Files\Grid\GridHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="EmptyDataPoint.h">
+      <Filter>Header Files\Grid\DataPoints</Filter>
+    </ClInclude>
+    <ClInclude Include="FloatDataPoint.h">
+      <Filter>Header Files\Grid\DataPoints</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorDataPoint.h">
+      <Filter>Header Files\Grid\DataPoints</Filter>
+    </ClInclude>
+    <ClInclude Include="FloatFluidGrid.h">
+      <Filter>Header Files\Grid\GridTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidGridBase.h">
+      <Filter>Header Files\Grid\GridTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="VectorFluidGrid.h">
+      <Filter>Header Files\Grid\GridTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="GridBuilder.h">
+      <Filter>Header Files\Grid\GridHelpers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
