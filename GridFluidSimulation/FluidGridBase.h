@@ -91,11 +91,9 @@ public:
 	void StartUpdate(float deltaTime) { newValues = storedValues; lastDeltaTime = deltaTime; }
 	void EndUpdate()
 	{
-		computeBoundaries();
-
-		for (size_t y = 0; y < m_rows; y++)
+		for (std::size_t y = 0; y < m_rows; y++)
 		{
-			for (size_t x = 0; x < m_columns; x++)
+			for (std::size_t x = 0; x < m_columns; x++)
 			{
 				GetDataPoint(x, y).SetValue(ValueAtPosition(newValues, x, y).GetValue());
 			}
@@ -104,9 +102,9 @@ public:
 
 	void AdvectValues()
 	{
-		for (size_t y = 1; y < m_rows - 1; y++)
+		for (std::size_t y = 0; y < m_rows; y++)
 		{
-			for (size_t x = 1; x < m_columns - 1; x++)
+			for (std::size_t x = 0; x < m_columns; x++)
 			{
 				EmptyDataPoint<T> currentValue = ValueAtPosition(storedValues, x, y);
 				powidl::Vector3 velocity = gridManager->GetVelocityAtCoordinate(currentValue.GetCoordinates());
@@ -189,44 +187,6 @@ private:
 		ValueAtPosition(newValues, lowerNewXIndex + 1, lowerNewYIndex + 1).AddToValue(currentValue * ((1 - dx) * (1 - dy)));
 	}
 
-	void computeBoundaries()
-	{
-		if (!isVeloctiyGrid || (isVeloctiyGrid && velocityDirection.y != 0))
-		{
-			for (std::size_t x = 1; x < m_columns - 1; x++)
-			{
-				ValueAtPosition(newValues, x, 0).SetValue(-ValueAtPosition(newValues, x, 1).GetValue());
-				ValueAtPosition(newValues, x, m_rows - 1).SetValue(-ValueAtPosition(newValues, x, m_rows - 2).GetValue());
-			}
-		}
-		if (!isVeloctiyGrid || (isVeloctiyGrid && velocityDirection.x != 0))
-		{
-			for (std::size_t y = 1; y < m_rows - 1; y++)
-			{
-				ValueAtPosition(newValues, 0, y).SetValue(-ValueAtPosition(newValues, 1, y).GetValue());
-				ValueAtPosition(newValues, m_columns - 1, y).SetValue(-ValueAtPosition(newValues, m_columns - 2, y).GetValue());
-			}
-		}
-
-
-		// handle corners
-		ValueAtPosition(newValues, 0, 0).SetValue(0.5f * (
-			ValueAtPosition(newValues, 1, 0).GetValue() +
-			ValueAtPosition(newValues, 0, 1).GetValue()));
-
-		ValueAtPosition(newValues, m_columns - 1, 0).SetValue(0.5f * (
-			ValueAtPosition(newValues, m_columns - 2, 0).GetValue() +
-			ValueAtPosition(newValues, m_columns - 1, 1).GetValue()));
-
-		ValueAtPosition(newValues, 0, m_rows - 1).SetValue(0.5f * (
-			ValueAtPosition(newValues, 1, m_rows - 1).GetValue() +
-			ValueAtPosition(newValues, 0, m_rows - 2).GetValue()));
-
-		ValueAtPosition(newValues, m_columns - 1, m_rows - 1).SetValue(0.5f * (
-			ValueAtPosition(newValues, m_columns - 2, m_rows - 1).GetValue() +
-			ValueAtPosition(newValues, m_columns - 1, m_rows - 2).GetValue()));
-	}
-
 	void LinearSolve(float a, int iterations)
 	{
 		for (int k = 0; k < iterations; k++)
@@ -253,7 +213,6 @@ private:
 					ValueAtPosition(newValues, x, y - 1).AddToValue(-currentValue);
 				}
 			}
-			computeBoundaries();
 		}
 	}
 

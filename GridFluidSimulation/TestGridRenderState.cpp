@@ -20,8 +20,8 @@ void TestGridRenderState::onFirstActivation()
 	addChild(make_shared<EntityManagerPlum>());
 	addChild(make_shared<SpriteVisualSystem>());
 	
-	addChild(make_shared<GridManager>(100, 100, 800.0f, 800.0f, -400.0f, -400.0f));
-	//addChild(make_shared<GridManager>(384, 216, 1920.0f, 1080.0f, -960.0f, -540.0f));
+	//addChild(make_shared<GridManager>(100, 100, 800.0f, 800.0f, -400.0f, -400.0f));
+	addChild(make_shared<GridManager>(384, 216, 1920.0f, 1080.0f, -960.0f, -540.0f));
 	addChild(make_shared<GridRenderer>());
 }
 
@@ -115,8 +115,8 @@ bool TestGridRenderState::onMouseMove(int x, int y)
 
 		Vector2 dragDirection = worldPoint - worldPointPreviously;
 
-		usePlum<GridManager>().AddVelocity(worldPoint.x, worldPoint.y, Vector3(dragDirection.x, dragDirection.y, 0) * 5.0f);
-		usePlum<GridManager>().AddDye(worldPoint.x, worldPoint.y, 10.0f);
+		usePlum<GridManager>().AddVelocity(worldPoint.x, worldPoint.y, Vector3(dragDirection.x, dragDirection.y, 0) * 25.0f);
+		usePlum<GridManager>().AddDye(worldPoint.x, worldPoint.y, 5.0f);
 
 		mouseX = x;
 		mouseY = y;

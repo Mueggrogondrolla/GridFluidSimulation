@@ -78,5 +78,7 @@ private:
 
 
 	void InitializeGrids(std::size_t columns, std::size_t rows, float width, float height, float offsetX, float offsetY);
+
+	void computeBoundaries();
 };
 

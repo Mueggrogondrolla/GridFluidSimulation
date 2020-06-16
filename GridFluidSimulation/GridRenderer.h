@@ -45,7 +45,7 @@ private:
 
 	bool m_drawGridLines = false;
 	bool m_drawPressurePoints = true;
-	bool m_drawVelocityVectors = true;
+	bool m_drawVelocityVectors = false;
 	bool m_drawCoordinateSystem = false;
 
 	powidl::Vector2 previousViewSize = powidl::Vector2(0, 0);
