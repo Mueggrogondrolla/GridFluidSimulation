@@ -161,7 +161,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FloatFluidGrid.cpp" />
     <ClCompile Include="GridBuilder.cpp" />
     <ClCompile Include="GridFluidRenderLayer.cpp">
       <SubType>
@@ -185,12 +184,9 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="VectorFluidGrid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EmptyDataPoint.h" />
-    <ClInclude Include="FloatDataPoint.h" />
-    <ClInclude Include="FloatFluidGrid.h" />
     <ClInclude Include="FluidGridBase.h">
       <SubType>
       </SubType>
@@ -220,8 +216,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="VectorDataPoint.h" />
-    <ClInclude Include="VectorFluidGrid.h" />
     <ClInclude Include="VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
