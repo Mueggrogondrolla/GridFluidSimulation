@@ -1,12 +1,12 @@
 #include "TestGridRenderState.h"
-#include "GridRenderer.h"
 #include "GridManager.h"
+#include "GridFluidRenderLayer.h"
 
 using namespace std;
 using namespace powidl;
 
 TestGridRenderState::TestGridRenderState(const std::string & keyPath)
-	: KeyPlum(keyPath)
+	: KeyPlum(keyPath), mouseX(0), mouseY(0)
 {
 	// Intentionally left empty
 }
@@ -22,7 +22,9 @@ void TestGridRenderState::onFirstActivation()
 	
 	//addChild(make_shared<GridManager>(100, 100, 800.0f, 800.0f, -400.0f, -400.0f));
 	addChild(make_shared<GridManager>(384, 216, 1920.0f, 1080.0f, -960.0f, -540.0f));
-	addChild(make_shared<GridRenderer>());
+	addChild(make_shared<GridFluidRenderLayer>());
+
+	Logger::logDebug(PowidlVersion::info());
 }
 
 void TestGridRenderState::onActivation()
@@ -36,13 +38,13 @@ void TestGridRenderState::onActivation()
 		.addNode(SpriteNode2DBuilder(*this)
 			.addSprite(RectangleSpriteBuilder(*this)
 				.width(400).height(400)
-				.color(Color::fromRgb(220, 0, 0))
+				.color(powidl::StandardColors::ALICE_BLUE)
 				.build())
 			.build())
 		.addNode(SpriteNode2DBuilder(*this)
 			.addSprite(RectangleSpriteBuilder(*this)
 				.width(100).height(100)
-				.color(Color::fromRgb(180, 0, 0))
+				.color(powidl::StandardColors::AQUA)
 				.build())
 			.build())
 		.build()));
@@ -51,7 +53,7 @@ void TestGridRenderState::onActivation()
 
 void TestGridRenderState::onDeactivation()
 {
-	// Place cleanup code here...
+
 }
 
 bool TestGridRenderState::onKeyDown(powidl::Keycode code)

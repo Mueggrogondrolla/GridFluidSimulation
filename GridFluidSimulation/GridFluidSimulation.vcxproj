@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -163,6 +163,10 @@
   <ItemGroup>
     <ClCompile Include="FloatFluidGrid.cpp" />
     <ClCompile Include="GridBuilder.cpp" />
+    <ClCompile Include="GridFluidRenderLayer.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="GridManager.cpp">
       <SubType>
       </SubType>
@@ -172,6 +176,7 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SimplePlane2DMesh.cpp" />
     <ClCompile Include="TestGridRenderState.cpp">
       <SubType>
       </SubType>
@@ -187,6 +192,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="GridBuilder.h" />
+    <ClInclude Include="GridFluidRenderLayer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="GridManager.h">
       <SubType>
       </SubType>
@@ -195,12 +204,37 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="PixelShader.h" />
+    <ClInclude Include="SimplePlane2DMesh.h" />
+    <ClInclude Include="SimpleTriangle.h" />
+    <ClInclude Include="SimpleVertex.h" />
     <ClInclude Include="TestGridRenderState.h">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="VectorDataPoint.h" />
     <ClInclude Include="VectorFluidGrid.h" />
+    <ClInclude Include="VertexShader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="PixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">data%(Filename)</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
+    </FxCompile>
+    <FxCompile Include="VertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">data%(Filename)</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

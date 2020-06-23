@@ -11,7 +11,7 @@ public:
 	 * 
 	 * @param keyPath	the path to the data depot
 	 */
-	TestGridRenderState(const std::string & keyPath = "");
+	TestGridRenderState(const std::string & keyPath = "GridRenderTest");
 
 	// Inherited via Plum
 	virtual void onFirstActivation() override;

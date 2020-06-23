@@ -43,6 +43,7 @@ private:
 
 	bool m_drawArrowHeads = false;
 
+	bool m_drawOutline = true;
 	bool m_drawGridLines = false;
 	bool m_drawPressurePoints = true;
 	bool m_drawVelocityVectors = false;

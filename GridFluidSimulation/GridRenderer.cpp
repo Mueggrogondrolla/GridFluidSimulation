@@ -26,38 +26,6 @@ void GridRenderer::onActivation()
 {
 	// Retrieve timeline used by this Plum
 	m_timeline = usePlum<ITimekeeper>().getOrCreateTimeline(m_timelineName);
-
-
-
-	auto& gridManager = usePlum<GridManager>();
-	size_t columns = gridManager.getColumns();
-	size_t rows = gridManager.getRows();
-	float cellWidth = gridManager.GetWidth() / columns;
-	float cellHeight = gridManager.GetHeight() / rows;
-	float offsetX = gridManager.GetOffsetX();
-	float offsetY = gridManager.GetOffsetY();
-
-	//cellContentsSpriteNode->removeChildren();
-
-	//for (size_t y = 0; y < rows; y++)
-	//{
-	//	for (size_t x = 0; x < columns; x++)
-	//	{
-	//		cellContentsSpriteNode->addNode(
-	//			SpriteNode2DBuilder(*this).addSprite(
-	//				RectangleSpriteBuilder(*this)
-	//				.width(cellWidth)
-	//				.height(cellHeight)
-	//				.filled(true)
-	//				.color(Color::fromRgb(0, 0, 0))
-	//				.build())
-	//			.position(offsetX + x * cellWidth + cellWidth / 2, offsetY + y * cellHeight + cellHeight / 2)
-	//			.name("cellFillNode" + to_string(x) + "," + to_string(y))
-	//			.build());
-	//	}
-	//}
-
-	// TODO: Place initialization code here...
 }
 
 void GridRenderer::onDeactivation()
@@ -75,7 +43,7 @@ void GridRenderer::update() {
 	auto& cameraControl = usePlum<Camera2DControlPlum>();
 	auto camera = cameraManager.getCamera();
 
-	Vector2 viewSize = camera->getViewSize(); // -Vector2(50, 50); <-- To test, if the clipping algorithm works (all lines outside the visible viewport shall not be rendered)
+	Vector2 viewSize = camera->getViewSize();
 	Vector2 cameraPosition = camera->getPosition();
 	cameraPosition.x -= viewSize.x / 2;
 	cameraPosition.y -= viewSize.y / 2;
@@ -127,6 +95,15 @@ void GridRenderer::update() {
 	{
 		drawVector(Vector2(0, -1000), Vector2(0, 1000), cameraPosition, viewSize, lineRenderer, StandardColors::BLUE);
 		drawVector(Vector2(-1000, 0), Vector2(1000, 0), cameraPosition, viewSize, lineRenderer, StandardColors::RED);
+	}
+
+	// Draw the grid lines
+	if (!m_drawGridLines && m_drawOutline)
+	{
+		drawVector(Vector2(offsetX, offsetY), Vector2(offsetX + gridManager.GetWidth(), offsetY), cameraPosition, viewSize, lineRenderer, lineColor);
+		drawVector(Vector2(offsetX + gridManager.GetWidth(), offsetY), Vector2(offsetX + gridManager.GetWidth(), offsetY + gridManager.GetHeight()), cameraPosition, viewSize, lineRenderer, lineColor);
+		drawVector(Vector2(offsetX + gridManager.GetWidth(), offsetY + gridManager.GetHeight()), Vector2(offsetX, offsetY + gridManager.GetHeight()), cameraPosition, viewSize, lineRenderer, lineColor);
+		drawVector(Vector2(offsetX, offsetY + gridManager.GetHeight()), Vector2(offsetX, offsetY), cameraPosition, viewSize, lineRenderer, lineColor);
 	}
 
 	// Draw the grid lines
@@ -198,26 +175,6 @@ void GridRenderer::update() {
 			drawVector(Vector2(currentCoordinates.x, currentCoordinates.y), Vector2(currentCoordinates.x + velocity.x, currentCoordinates.y + velocity.y), cameraPosition, viewSize, lineRenderer, lineColor);
 		}
 	}
-
-	// draw the filling for each cell, if there is a fluid in it
-	//if (false)
-	//{
-	//	for (size_t y = 0; y < rows; y++)
-	//	{
-	//		for (size_t x = 0; x < columns; x++)
-	//		{
-	//			if (true || gridManager.GetPressurePointByIndices(x, y)->GetPressure() > 1)
-	//			{
-	//				cellContentsSpriteNode->getNode("cellFillNode" + to_string(x) + "," + to_string(y))->getSprite<RectangleSprite>()->setColor(Color::fromRgb(m_colorCounter / (255 * 255), m_colorCounter / (255), m_colorCounter % 255));
-
-	//				if (++m_colorCounter > 255 * 255 * 255 - 1)
-	//				{
-	//					m_colorCounter = 0;
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
 }
 
 

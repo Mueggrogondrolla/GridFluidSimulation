@@ -7,6 +7,8 @@
 #include "EmptyDataPoint.h"
 #include "GridManager.h"
 
+using namespace std;
+
 template<class T> class FluidGridBase : public powidl::UpdatableKeyPlum {
 public:
 
@@ -117,7 +119,29 @@ public:
 	void Diffuse()
 	{
 		float a = lastDeltaTime * m_diffusionFactor;
-		LinearSolve(a, m_diffusionIterations);
+
+		for (int y = 1; y < m_rows - 1; y++)
+		{
+			for (int x = 1; x < m_columns - 1; x++)
+			{
+				T currentValue = ValueAtPosition(newValues, x + 1, y).GetValue() * a;
+				ValueAtPosition(newValues, x, y).AddToValue(currentValue);
+				ValueAtPosition(newValues, x + 1, y).AddToValue(-currentValue);
+
+				currentValue = ValueAtPosition(newValues, x - 1, y).GetValue() * a;
+				ValueAtPosition(newValues, x, y).AddToValue(currentValue);
+				ValueAtPosition(newValues, x - 1, y).AddToValue(-currentValue);
+
+
+				currentValue = ValueAtPosition(newValues, x, y + 1).GetValue() * a;
+				ValueAtPosition(newValues, x, y).AddToValue(currentValue);
+				ValueAtPosition(newValues, x, y + 1).AddToValue(-currentValue);
+
+				currentValue = ValueAtPosition(newValues, x, y - 1).GetValue() * a;
+				ValueAtPosition(newValues, x, y).AddToValue(currentValue);
+				ValueAtPosition(newValues, x, y - 1).AddToValue(-currentValue);
+			}
+		}
 	}
 
 	void AddValue(float x, float y, T valueToAdd)
@@ -152,14 +176,13 @@ private:
 	bool isVeloctiyGrid;
 	powidl::Vector3 velocityDirection;
 
-	float m_diffusionFactor = 0.1f;
-	int m_diffusionIterations = 1;
+	float m_diffusionFactor = 0.15f;
 
 	float lastDeltaTime;
 
 
 
-	void AdvectValue(size_t indexX, size_t indexY, powidl::Vector3 advectionVector)
+	void AdvectValue(std::size_t indexX, std::size_t indexY, powidl::Vector3 advectionVector)
 	{
 		EmptyDataPoint<T>& currentDataPoint = ValueAtPosition(newValues, indexX, indexY);
 		powidl::Vector3 newForwardCoordinates = currentDataPoint.GetCoordinates() + advectionVector * lastDeltaTime;
@@ -169,11 +192,11 @@ private:
 		float cellWidth = GetCellWidth();
 		float cellHeight = GetCellHeight();
 
-		size_t lowerNewXIndex = GetLowerXIndex(newForwardCoordinates.x);
-		size_t lowerNewYIndex = GetLowerYIndex(newForwardCoordinates.y);
+		std::size_t lowerNewXIndex = GetLowerXIndex(newForwardCoordinates.x);
+		std::size_t lowerNewYIndex = GetLowerYIndex(newForwardCoordinates.y);
 
-		float dx = 1.0f - std::min(1.0f, std::max(0.0f, (newForwardCoordinates.x - (lowerNewXIndex * cellWidth + m_offsetX)) / cellWidth));
-		float dy = 1.0f - std::min(1.0f, std::max(0.0f, (newForwardCoordinates.y - (lowerNewYIndex * cellHeight + m_offsetY)) / cellHeight));
+		float dx = 1.0f - min(1.0f, max(0.0f, (newForwardCoordinates.x - (lowerNewXIndex * cellWidth + m_offsetX)) / cellWidth));
+		float dy = 1.0f - min(1.0f, max(0.0f, (newForwardCoordinates.y - (lowerNewYIndex * cellHeight + m_offsetY)) / cellHeight));
 
 		//if (lowerNewXIndex >= indexX) { dx = 1 - dx; }
 		//if (lowerNewYIndex >= indexY) { dy = 1 - dy; }
@@ -185,35 +208,6 @@ private:
 		ValueAtPosition(newValues, lowerNewXIndex + 1, lowerNewYIndex).AddToValue(currentValue * (1 - dx) * dy);
 		ValueAtPosition(newValues, lowerNewXIndex, lowerNewYIndex + 1).AddToValue(currentValue * dx * (1 - dy));
 		ValueAtPosition(newValues, lowerNewXIndex + 1, lowerNewYIndex + 1).AddToValue(currentValue * ((1 - dx) * (1 - dy)));
-	}
-
-	void LinearSolve(float a, int iterations)
-	{
-		for (int k = 0; k < iterations; k++)
-		{
-			for (int y = 1; y < m_rows - 1; y++)
-			{
-				for (int x = 1; x < m_columns - 1; x++)
-				{
-					T currentValue = ValueAtPosition(newValues, x + 1, y).GetValue() * a;
-					ValueAtPosition(newValues, x, y).AddToValue(currentValue);
-					ValueAtPosition(newValues, x + 1, y).AddToValue(-currentValue);
-
-					currentValue = ValueAtPosition(newValues, x - 1, y).GetValue() * a;
-					ValueAtPosition(newValues, x, y).AddToValue(currentValue);
-					ValueAtPosition(newValues, x - 1, y).AddToValue(-currentValue);
-
-
-					currentValue = ValueAtPosition(newValues, x, y + 1).GetValue() * a;
-					ValueAtPosition(newValues, x, y).AddToValue(currentValue);
-					ValueAtPosition(newValues, x, y + 1).AddToValue(-currentValue);
-
-					currentValue = ValueAtPosition(newValues, x, y - 1).GetValue() * a;
-					ValueAtPosition(newValues, x, y).AddToValue(currentValue);
-					ValueAtPosition(newValues, x, y - 1).AddToValue(-currentValue);
-				}
-			}
-		}
 	}
 
 
@@ -248,9 +242,9 @@ private:
 		return index;
 	}
 
-	std::size_t GetLowerXIndex(float xCoordinate) { return std::min((int)m_columns, std::max(0, (int)(((m_columns - 1) * (xCoordinate - m_offsetX)) / m_width))); }
+	std::size_t GetLowerXIndex(float xCoordinate) { return min((int)m_columns, max(0, (int)(((m_columns - 1) * (xCoordinate - m_offsetX)) / m_width))); }
 	std::size_t GetUpperXIndex(float xCoordinate) { return GetLowerXIndex(xCoordinate) + 1; }
-	std::size_t GetLowerYIndex(float yCoordinate) { return std::min((int)m_rows, std::max(0, (int)(((m_rows - 1) * (yCoordinate - m_offsetY)) / m_height))); }
+	std::size_t GetLowerYIndex(float yCoordinate) { return min((int)m_rows, max(0, (int)(((m_rows - 1) * (yCoordinate - m_offsetY)) / m_height))); }
 	std::size_t GetUpperYIndex(float yCoordinate) { return GetLowerYIndex(yCoordinate) + 1; }
 
 	std::size_t GetArrayPositionFromIndices(std::size_t indexX, std::size_t indexY) { return normalizeIndexX(indexX) + m_columns * normalizeIndexY(indexY); }
