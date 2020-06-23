@@ -35,6 +35,12 @@ VS_OUTPUT main(VS_INPUT input)
 	//output.color = float4(input.vColor.r * sin(time) / 2 + 0.5, input.vColor.g * cos(time) / 2 + 0.5, input.vColor.b, input.vColor.a);
 
 	float density = densities[input.vTexUV.z];
+
+	float blurFactor = 0;
+
+	density *= 1;
+	density += (densities[input.vTexUV.z - 1] + densities[input.vTexUV.z + 1] + densities[input.vTexUV.z - columns] + densities[input.vTexUV.z + columns]) * blurFactor;
+
 	output.color = float4(density, density, density, 1);
 
 	return output;

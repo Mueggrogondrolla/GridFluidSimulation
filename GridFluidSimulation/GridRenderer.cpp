@@ -81,15 +81,6 @@ void GridRenderer::update() {
 	float offsetY = gridManager.GetOffsetY();
 
 
-	/*
-	// Draw a debug box
-	drawVector(Vector2(-10, 10), Vector2(10, 10), lineRenderer, lineColor);
-	drawVector(Vector2(10, 10), Vector2(10, -10), lineRenderer, lineColor);
-	drawVector(Vector2(10, -10), Vector2(-10, -10), lineRenderer, lineColor);
-	drawVector(Vector2(-10, -10), Vector2(-10, 10), lineRenderer, lineColor);
-	*/
-
-
 	// Draw a "coordinate system"
 	if (m_drawCoordinateSystem)
 	{
@@ -133,10 +124,27 @@ void GridRenderer::update() {
 			Vector3 currentCoordinates = currentDataPoint.GetCoordinates();
 			float pressure = currentDataPoint.GetValue();
 
-			lineColor.setRgb(255, 255, 255, min(255, max(0, (int) (255 * pressure))));
+			lineColor.setRgb(255, 255, 255, min(255, max(0, (int)(255 * pressure))));
 
 			drawVector(Vector2(currentCoordinates.x - 1, currentCoordinates.y), Vector2(currentCoordinates.x + 1, currentCoordinates.y), cameraPosition, viewSize, lineRenderer, lineColor);
 			drawVector(Vector2(currentCoordinates.x, currentCoordinates.y - 1), Vector2(currentCoordinates.x, currentCoordinates.y + 1), cameraPosition, viewSize, lineRenderer, lineColor);
+		}
+	}
+
+
+	if (m_drawIntermediateVelocityVectors)
+	{
+		vector<EmptyDataPoint<float>> pressurePoints = gridManager.GetPressureDataPoints();
+		EmptyDataPoint<float>* pressurePointsData = pressurePoints.data();
+
+		while (pressurePointsData < &pressurePoints.back())
+		{
+			EmptyDataPoint<float> currentDataPoint = *pressurePointsData++;
+
+			Vector3 currentCoordinates = currentDataPoint.GetCoordinates();
+			Vector3 velocity = gridManager.GetVelocityAtCoordinate(currentCoordinates);
+
+			drawVector(Vector2(currentCoordinates.x, currentCoordinates.y), Vector2(currentCoordinates.x + velocity.x, currentCoordinates.y + velocity.y), cameraPosition, viewSize, lineRenderer, lineColor);
 		}
 	}
 

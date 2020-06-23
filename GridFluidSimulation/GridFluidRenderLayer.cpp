@@ -11,7 +11,7 @@ using namespace std;
 using namespace powidl;
 
 GridFluidRenderLayer::GridFluidRenderLayer(const std::string& keyPath)
-	: BaseD3d11GraphicsLayer2DPlum(keyPath, Priority::NORMAL, "")
+	: BaseD3d11GraphicsLayer2DPlum(keyPath, Priority::LOW, "")
 {
 	// Intentionally left empty
 }

@@ -121,8 +121,8 @@ bool TestGridRenderState::onMouseMove(int x, int y)
 
 		Vector2 dragDirection = worldPoint - worldPointPreviously;
 
-		usePlum<GridManager>().AddVelocity(worldPoint.x, worldPoint.y, Vector3(dragDirection.x, dragDirection.y, 0) * 25.0f);
-		usePlum<GridManager>().AddDye(worldPoint.x, worldPoint.y, 5.0f);
+		usePlum<GridManager>().AddVelocity(worldPoint.x, worldPoint.y, Vector3(dragDirection.x, dragDirection.y, 0) * 5.0f);
+		usePlum<GridManager>().AddDye(worldPoint.x, worldPoint.y, 1.0f);
 
 		mouseX = x;
 		mouseY = y;

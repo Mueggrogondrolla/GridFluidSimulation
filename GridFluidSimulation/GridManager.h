@@ -63,6 +63,9 @@ private:
 
 	float maxDeltaTime = 0.2f;
 
+	powidl::Vector2 m_center;
+	float m_time = 0;
+
 
 	/**
 	 * Convenient method returning the current delta time.
