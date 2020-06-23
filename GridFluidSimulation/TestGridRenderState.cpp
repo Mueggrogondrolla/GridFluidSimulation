@@ -1,6 +1,7 @@
 #include "TestGridRenderState.h"
 #include "GridManager.h"
 #include "GridFluidRenderLayer.h"
+#include "RenderData.h"
 
 using namespace std;
 using namespace powidl;
@@ -20,8 +21,11 @@ void TestGridRenderState::onFirstActivation()
 	addChild(make_shared<EntityManagerPlum>());
 	addChild(make_shared<SpriteVisualSystem>());
 	
-	//addChild(make_shared<GridManager>(100, 100, 800.0f, 800.0f, -400.0f, -400.0f));
+	//addChild(make_shared<GridManager>(10, 10, 800.0f, 800.0f, -400.0f, -400.0f));
 	addChild(make_shared<GridManager>(384, 216, 1920.0f, 1080.0f, -960.0f, -540.0f));
+
+	addChild(make_shared<RenderData>());
+
 	addChild(make_shared<GridFluidRenderLayer>());
 
 	Logger::logDebug(PowidlVersion::info());

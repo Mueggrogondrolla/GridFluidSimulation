@@ -231,6 +231,22 @@ vector<EmptyDataPoint<float>> GridManager::GetPressureDataPoints()
 	return (*m_floatValueGrids.begin())->GetDataPoints();
 }
 
+std::vector<float> GridManager::GetDataToBeRendered()
+{
+	std::vector<float> data = vector<float>();
+
+	vector<EmptyDataPoint<float>> dataPoints = (*m_floatValueGrids.begin())->GetDataPoints();
+	vector<EmptyDataPoint<float>>::iterator iterator = dataPoints.begin();
+
+	while (iterator != dataPoints.end())
+	{
+		data.push_back((*iterator).GetValue());
+		iterator++;
+	}
+
+	return data;
+}
+
 
 
 

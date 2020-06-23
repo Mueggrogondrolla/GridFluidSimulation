@@ -35,6 +35,8 @@ public:
 	std::vector<std::shared_ptr<FluidGridBase<powidl::Vector3>>> GetVector3ValueGrids();
 	std::vector<EmptyDataPoint<float>> GetPressureDataPoints();
 
+	std::vector<float> GetDataToBeRendered();
+
 	powidl::Vector3 GetVelocityAtCoordinate(float x, float y, float z);
 	powidl::Vector3 GetVelocityAtCoordinate(powidl::Vector2 coordinates);
 	powidl::Vector3 GetVelocityAtCoordinate(powidl::Vector3 coordinates);

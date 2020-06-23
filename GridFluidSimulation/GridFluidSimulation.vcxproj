@@ -176,6 +176,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RenderData.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="SimplePlane2DMesh.cpp" />
     <ClCompile Include="TestGridRenderState.cpp">
       <SubType>
@@ -205,6 +209,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="PixelShader.h" />
+    <ClInclude Include="RenderData.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="SimplePlane2DMesh.h" />
     <ClInclude Include="SimpleTriangle.h" />
     <ClInclude Include="SimpleVertex.h" />
@@ -225,6 +233,9 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">data%(Filename)</VariableName>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">data%(Filename)</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
     </FxCompile>
     <FxCompile Include="VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
@@ -234,6 +245,9 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">data%(Filename)</VariableName>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">data%(Filename)</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
