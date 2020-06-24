@@ -6,7 +6,7 @@
 using namespace std;
 using namespace powidl;
 
-TestGridRenderState::TestGridRenderState(const std::string & keyPath)
+TestGridRenderState::TestGridRenderState(const std::string& keyPath)
 	: KeyPlum(keyPath), mouseX(0), mouseY(0)
 {
 	// Intentionally left empty
@@ -18,17 +18,13 @@ void TestGridRenderState::onFirstActivation()
 	addChild(usePlum<ICamera2DManagerFactory>().createCamera2DManager());
 	addChild(make_shared<Camera2DControlPlum>());
 
-	addChild(make_shared<EntityManagerPlum>());
-	addChild(make_shared<SpriteVisualSystem>());
-	
 	//addChild(make_shared<GridManager>(10, 10, 800.0f, 800.0f, -400.0f, -400.0f));
-	addChild(make_shared<GridManager>(384, 216, 1920.0f, 1080.0f, -960.0f, -540.0f));
+	//addChild(make_shared<GridManager>(384, 216, 1920.0f, 1080.0f, -960.0f, -540.0f));
+	addChild(make_shared<GridManager>(384, 216, 19.2f, 10.8f, -9.6f, -5.4f));
 
 	addChild(make_shared<RenderData>());
 
 	addChild(make_shared<GridFluidRenderLayer>());
-
-	Logger::logDebug(PowidlVersion::info());
 }
 
 void TestGridRenderState::onActivation()
@@ -36,23 +32,9 @@ void TestGridRenderState::onActivation()
 	usePlum<IKeyboard>().addKeyboardListener(this);
 	usePlum<IMouse>().addMouseListener(this);
 
-	shared_ptr<Entity> entity = make_shared<Entity>();
-	entity->addComponent(make_unique<Pose2D>());
-	entity->addComponent(make_unique<SpriteVisual>(SpriteNode2DBuilder(*this)
-		.addNode(SpriteNode2DBuilder(*this)
-			.addSprite(RectangleSpriteBuilder(*this)
-				.width(400).height(400)
-				.color(powidl::StandardColors::ALICE_BLUE)
-				.build())
-			.build())
-		.addNode(SpriteNode2DBuilder(*this)
-			.addSprite(RectangleSpriteBuilder(*this)
-				.width(100).height(100)
-				.color(powidl::StandardColors::AQUA)
-				.build())
-			.build())
-		.build()));
-	//usePlum<IEntityManager>().addEntity(entity);
+	//usePlum<Camera2DControlPlum>().setHomeZoomLevel(5);
+	//usePlum<Camera2DControlPlum>().setZoomLevel(5);
+	usePlum<Camera2DControlPlum>().setZoom(80);
 }
 
 void TestGridRenderState::onDeactivation()
@@ -62,13 +44,13 @@ void TestGridRenderState::onDeactivation()
 
 bool TestGridRenderState::onKeyDown(powidl::Keycode code)
 {
+	auto& gridManager = usePlum<GridManager>();
 	if (code == powidl::Keycode::K_A)
 	{
-		usePlum<GridManager>().AdvectAll();
+		if (gridManager.IsPaused()) { usePlum<GridManager>().AdvectAll(); }
 	}
 	if (code == powidl::Keycode::K_P)
 	{
-		auto& gridManager = usePlum<GridManager>();
 		if (gridManager.IsPaused()) { gridManager.Resume(); }
 		else { gridManager.Pause(); }
 	}
@@ -82,8 +64,6 @@ bool TestGridRenderState::onKeyDown(powidl::Keycode code)
 
 bool TestGridRenderState::onMouseButtonDown(int x, int y, int button)
 {
-	Logger::logDebug(to_string(button));
-
 	if (button == 0)
 	{
 		mouseX = x;

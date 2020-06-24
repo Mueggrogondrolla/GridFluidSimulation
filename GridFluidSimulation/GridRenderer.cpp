@@ -55,8 +55,6 @@ void GridRenderer::update() {
 	{
 		previousViewSize = viewSize;
 		previousCameraPosition = cameraPosition;
-
-		Logger::logDebug("Camera properties: view size = " + powidlVector2ToString(viewSize) + "; camera position = " + powidlVector2ToString(cameraPosition));
 	}
 
 
@@ -65,6 +63,8 @@ void GridRenderer::update() {
 	// Prepare the line renderer
 	auto& lineRenderer = usePlum<ILineRenderer2D>();
 	lineRenderer.setLineWidth(1);
+
+	// TODO: fix line renderer limitation (max 2^16 lines drawn or something like that)
 
 	powidl::Color lineColor = powidl::StandardColors::WHITE;
 
@@ -77,9 +77,20 @@ void GridRenderer::update() {
 	size_t rows = gridManager.getRows();
 	float cellWidth = gridManager.GetWidth() / columns;
 	float cellHeight = gridManager.GetHeight() / rows;
+
+	float width = gridManager.GetWidth();
+	float height = gridManager.GetHeight();
+
 	float offsetX = gridManager.GetOffsetX();
 	float offsetY = gridManager.GetOffsetY();
 
+
+	//m_time += m_timeline->getDeltaTime();
+
+	//lineColor = powidl::StandardColors::RED;
+	//drawVector(Vector2(offsetX + width / 2, offsetY + height / 2), Vector2(1, 0).rotateDeg(m_time * 50), cameraPosition, viewSize, lineRenderer, lineColor);
+
+	//lineColor = powidl::StandardColors::WHITE;
 
 	// Draw a "coordinate system"
 	if (m_drawCoordinateSystem)
@@ -91,10 +102,10 @@ void GridRenderer::update() {
 	// Draw the grid lines
 	if (!m_drawGridLines && m_drawOutline)
 	{
-		drawVector(Vector2(offsetX, offsetY), Vector2(offsetX + gridManager.GetWidth(), offsetY), cameraPosition, viewSize, lineRenderer, lineColor);
-		drawVector(Vector2(offsetX + gridManager.GetWidth(), offsetY), Vector2(offsetX + gridManager.GetWidth(), offsetY + gridManager.GetHeight()), cameraPosition, viewSize, lineRenderer, lineColor);
-		drawVector(Vector2(offsetX + gridManager.GetWidth(), offsetY + gridManager.GetHeight()), Vector2(offsetX, offsetY + gridManager.GetHeight()), cameraPosition, viewSize, lineRenderer, lineColor);
-		drawVector(Vector2(offsetX, offsetY + gridManager.GetHeight()), Vector2(offsetX, offsetY), cameraPosition, viewSize, lineRenderer, lineColor);
+		drawVector(Vector2(offsetX, offsetY), Vector2(offsetX + width, offsetY), cameraPosition, viewSize, lineRenderer, lineColor);
+		drawVector(Vector2(offsetX + width, offsetY), Vector2(offsetX + width, offsetY + height), cameraPosition, viewSize, lineRenderer, lineColor);
+		drawVector(Vector2(offsetX + width, offsetY + height), Vector2(offsetX, offsetY + height), cameraPosition, viewSize, lineRenderer, lineColor);
+		drawVector(Vector2(offsetX, offsetY + height), Vector2(offsetX, offsetY), cameraPosition, viewSize, lineRenderer, lineColor);
 	}
 
 	// Draw the grid lines
@@ -102,11 +113,11 @@ void GridRenderer::update() {
 	{
 		for (size_t y = 0; y <= rows; y++)
 		{
-			drawVector(Vector2(offsetX, offsetY + y * cellHeight), Vector2(offsetX + gridManager.GetWidth(), offsetY + y * cellHeight), cameraPosition, viewSize, lineRenderer, lineColor);
+			drawVector(Vector2(offsetX, offsetY + y * cellHeight), Vector2(offsetX + width, offsetY + y * cellHeight), cameraPosition, viewSize, lineRenderer, lineColor);
 		}
 		for (size_t x = 0; x <= columns; x++)
 		{
-			drawVector(Vector2(offsetX + x * cellWidth, offsetY), Vector2(offsetX + x * cellWidth, offsetY + gridManager.GetHeight()), cameraPosition, viewSize, lineRenderer, lineColor);
+			drawVector(Vector2(offsetX + x * cellWidth, offsetY), Vector2(offsetX + x * cellWidth, offsetY + height), cameraPosition, viewSize, lineRenderer, lineColor);
 		}
 	}
 
@@ -124,7 +135,9 @@ void GridRenderer::update() {
 			Vector3 currentCoordinates = currentDataPoint.GetCoordinates();
 			float pressure = currentDataPoint.GetValue();
 
-			lineColor.setRgb(255, 255, 255, min(255, max(0, (int)(255 * pressure))));
+			int saturation = min(255, max(0, (int)(255 * pressure)));
+
+			lineColor.setRgb(saturation, saturation, saturation, 255);
 
 			drawVector(Vector2(currentCoordinates.x - 1, currentCoordinates.y), Vector2(currentCoordinates.x + 1, currentCoordinates.y), cameraPosition, viewSize, lineRenderer, lineColor);
 			drawVector(Vector2(currentCoordinates.x, currentCoordinates.y - 1), Vector2(currentCoordinates.x, currentCoordinates.y + 1), cameraPosition, viewSize, lineRenderer, lineColor);

@@ -43,6 +43,9 @@
     <Filter Include="Source Files\Shader">
       <UniqueIdentifier>{330140c7-f01c-4aea-8ba3-694be1523837}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\MeshHelpers">
+      <UniqueIdentifier>{de0fb78f-f59b-484e-b115-40aff9e3d430}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -60,14 +63,14 @@
     <ClCompile Include="GridBuilder.cpp">
       <Filter>Source Files\Grid\GridHelpers</Filter>
     </ClCompile>
-    <ClCompile Include="GridFluidRenderLayer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SimplePlane2DMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RenderData.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Grid\GridHelpers</Filter>
+    </ClCompile>
+    <ClCompile Include="GridFluidRenderLayer.cpp">
+      <Filter>Source Files\Grid\GridHelpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,20 +98,20 @@
     <ClInclude Include="VertexShader.h">
       <Filter>Header Files\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="GridFluidRenderLayer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="SimpleVertex.h">
+      <Filter>Header Files\MeshHelpers</Filter>
     </ClInclude>
     <ClInclude Include="SimplePlane2DMesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleVertex.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\MeshHelpers</Filter>
     </ClInclude>
     <ClInclude Include="SimpleTriangle.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\MeshHelpers</Filter>
     </ClInclude>
     <ClInclude Include="RenderData.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Grid\GridHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="GridFluidRenderLayer.h">
+      <Filter>Header Files\Grid\GridHelpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

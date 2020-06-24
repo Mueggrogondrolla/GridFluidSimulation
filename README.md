@@ -21,7 +21,13 @@ Some things to watch out for:
 - corners are not handled properly at the moment - it may be, that dye is getting stuck there
 
 ### Controls
-During runtime you can use a few shortcuts to toggle visibilities of rendered objects
+
+#### general shortcuts
+- P: pause/resume simulation
+- R: reset simulation
+- A: single step through simulation
+
+#### rendering shortcuts
 - CTRL + C: toggle drawing of a coordinate system
 - CTRL + G: toggle drawing of the grid lines
 - CTRL + V: toggle drawing of the real stored velocity vectors

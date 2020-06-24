@@ -6,7 +6,7 @@
 
 class RenderData;
 
-class GridFluidRenderLayer : public powidl::BaseD3d11GraphicsLayer2DPlum {
+class GridFluidRenderLayer : public powidl::BaseD3d11GraphicsLayer2DPlum, public powidl::IKeyboardListener {
 public:
 
 	/**
@@ -16,6 +16,8 @@ public:
 	 */
 	GridFluidRenderLayer(const std::string & keyPath = "");
 
+
+
 private:
 	// Add private members here.
 
@@ -23,6 +25,11 @@ private:
 	virtual void onFirstActivation() override;
 	virtual void onActivation() override;
 	virtual void onDeactivation() override;
+
+	// Geerbt über BaseD3d11GraphicsLayer2DPlum
+	virtual void doRender(powidl::ComPtr<ID3D11DeviceContext>& deviceContext) override;
+
+	virtual bool onKeyDown(powidl::Keycode code) override;
 
 	struct ConstantBufferData
 	{
@@ -39,8 +46,5 @@ private:
 	powidl::D3d11ShaderResourceViewGroup m_shaderResourceViews;
 
 	std::size_t m_numberOfDataPoints;
-
-	// Geerbt über BaseD3d11GraphicsLayer2DPlum
-	virtual void doRender(powidl::ComPtr<ID3D11DeviceContext>& deviceContext) override;
 };
 

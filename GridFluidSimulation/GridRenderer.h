@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <Sge.h>
+#include "GridFluidRenderLayer.h"
 
 class GridRenderer : public powidl::UpdatableKeyPlum {
 public:
@@ -50,6 +51,8 @@ private:
 	bool m_drawIntermediateVelocityVectors = true;
 	bool m_drawCoordinateSystem = false;
 
+	float m_time = 0;
+
 	powidl::Vector2 previousViewSize = powidl::Vector2(0, 0);
 	powidl::Vector2 previousCameraPosition = powidl::Vector2(0, 0);
 
@@ -60,5 +63,7 @@ private:
 	static bool LineIntersectsRectangle(powidl::Vector2 lineStartPoint, powidl::Vector2 lineEndPoint, powidl::Vector2 rectanglePosition, powidl::Vector2 rectangleSize);
 	static bool LineIntersectsLine(powidl::Vector2 line1StartPoint, powidl::Vector2 line1EndPoint, powidl::Vector2 line2StartPoint, powidl::Vector2 line2EndPoint);
 	static bool RectangleContainsPoint(powidl::Vector2 rectanglePosition, powidl::Vector2 rectangleSize, powidl::Vector2 point);
+
+	friend class GridFluidRenderLayer;
 };
 

@@ -17,10 +17,12 @@ void GridManager::InitializeGrids(size_t columns, size_t rows, float width, floa
 
 	m_center = Vector2(offsetX + width / 2, offsetY + height / 2);
 
-	m_floatValueGrids.push_back(make_shared<FluidGridBase<float>>(columns, rows, width - cellWidth, height - cellHeight, 0.0f, 0.0f, this, offsetX + cellWidth / 2, offsetY + cellHeight / 2));
+	m_floatValueGrids.push_back(make_shared<FluidGridBase<float>>(columns, rows, width - cellWidth, height - cellHeight, 0.1f, 0.0f, this, offsetX + cellWidth / 2, offsetY + cellHeight / 2));
 
-	m_vector3ValueGrids.push_back(make_shared<FluidGridBase<powidl::Vector3>>(columns + 1, rows, width, height - cellHeight, Vector3(-100, 0, 0), Vector3(0, 0, 0), this, offsetX, offsetY + cellHeight / 2, true, powidl::Vector3(1, 0, 0))); // X velocities
-	m_vector3ValueGrids.push_back(make_shared<FluidGridBase<powidl::Vector3>>(columns, rows + 1, width - cellWidth, height, Vector3(0, -100, 0), Vector3(0, 0, 0), this, offsetX + cellWidth / 2, offsetY, true, powidl::Vector3(0, 1, 0))); // Y velocities
+	m_vector3ValueGrids.push_back(make_shared<FluidGridBase<powidl::Vector3>>(columns + 1, rows, width, height - cellHeight, Vector3(0, 0, 0), Vector3(0, 0, 0), this, offsetX, offsetY + cellHeight / 2, true, powidl::Vector3(1, 0, 0))); // X velocities
+	m_vector3ValueGrids.push_back(make_shared<FluidGridBase<powidl::Vector3>>(columns, rows + 1, width - cellWidth, height, Vector3(0, 0, 0), Vector3(0, 0, 0), this, offsetX + cellWidth / 2, offsetY, true, powidl::Vector3(0, 1, 0))); // Y velocities
+
+	//AddVelocity(m_center.x, m_center.y, Vector3(0, 100, 0));
 }
 
 
@@ -43,12 +45,13 @@ void GridManager::onDeactivation()
 
 void GridManager::update()
 {
+	m_time += m_timeline->getDeltaTime();
+	Vector3 shootDirection = powidl::Vector3(2, 0, 0).rotateZDeg(m_time * 50);
+
 	if (m_isRunning)
 	{
-		m_time += m_timeline->getDeltaTime();
-
-		AddVelocity(m_center.x, m_center.y, powidl::Vector3(100, 0, 0).rotateZDeg(m_time * 50));
-		AddDye(m_center.x, m_center.y, 5);
+		AddVelocity(m_center.x, m_center.y, shootDirection);
+		AddDye(m_center.x, m_center.y, 2);
 
 		AdvectAll();
 	}
@@ -84,23 +87,23 @@ void GridManager::AddVelocity(float x, float y, powidl::Vector3 velocityToAdd)
 	if (x < offsetX)
 	{
 		x = offsetX;
-		velocityToAdd.x = 50;
+		velocityToAdd.x = 5;
 	}
 	if (x > offsetX + width)
 	{
 		x = offsetX + width;
-		velocityToAdd.x = -50;
+		velocityToAdd.x = -5;
 	}
 
 	if (y < offsetY)
 	{
 		y = offsetY;
-		velocityToAdd.y = 50;
+		velocityToAdd.y = 5;
 	}
 	if (y > offsetY + height)
 	{
 		y = offsetY + height;
-		velocityToAdd.y = -50;
+		velocityToAdd.y = -5;
 	}
 
 
@@ -145,35 +148,47 @@ void GridManager::computeBoundaries()
 	{
 		EmptyDataPoint<powidl::Vector3> currentValue = (*(++m_vector3ValueGrids.begin()))->GetDataPoint(x, 0);
 		Vector3 currentCoordinates = currentValue.GetCoordinates();
+		bool isCorner = x == 0 || x == columns - 1;
 
-		// this helper variable defines, whether the fluid pushes against the wall in this location or not
-		bool isPushing = currentValue.GetValue().y > 0;
+		if (currentValue.GetValue().y != 0)
+		{
+			// this helper variable defines, whether the fluid pushes against the wall in this location or not
+			bool isPushing = currentValue.GetValue().y < 0;
 
-		if (x > 0)
-		{
-			velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x - cellWidth / 2, currentCoordinates.y, powidl::Vector3(-currentValue.GetValue().y / 2 * (isPushing ? 1 : -1), 0, 0)));
+			float impulseFactor = (isCorner ? 0.5f : 0.25f) * (isPushing ? 1 : -1);
+			impulseFactor *= 0.99f;
+
+			if (x > 0)
+			{
+				velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x - cellWidth / 2, currentCoordinates.y, powidl::Vector3(currentValue.GetValue().y * impulseFactor, 0, 0)));
+			}
+			if (x < columns - 1)
+			{
+				velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x + cellWidth / 2, currentCoordinates.y, powidl::Vector3(-currentValue.GetValue().y * impulseFactor, 0, 0)));
+			}
+			velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates, -currentValue.GetValue()));
 		}
-		if (x < columns - 1)
-		{
-			velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x + cellWidth / 2, currentCoordinates.y, powidl::Vector3(currentValue.GetValue().y / 2 * (isPushing ? 1 : -1), 0, 0)));
-		}
-		velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x, currentCoordinates.y, -currentValue.GetValue()));
 
 
 		currentValue = (*(++m_vector3ValueGrids.begin()))->GetDataPoint(x, rows - 1);
 		currentCoordinates = currentValue.GetCoordinates();
 
-		isPushing = currentValue.GetValue().y > 0;
+		if (currentValue.GetValue().y != 0)
+		{
+			bool isPushing = currentValue.GetValue().y > 0;
+			float impulseFactor = (isCorner ? 0.5f : 0.25f) * (isPushing ? 1 : -1);
+			impulseFactor *= 0.99f;
 
-		if (x > 0)
-		{
-			velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x - cellWidth / 2, currentCoordinates.y, powidl::Vector3(-currentValue.GetValue().y / 2 * (isPushing ? 1 : -1), 0, 0)));
+			if (x > 0)
+			{
+				velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x - cellWidth / 2, currentCoordinates.y, powidl::Vector3(-currentValue.GetValue().y * impulseFactor, 0, 0)));
+			}
+			if (x < columns - 1)
+			{
+				velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x + cellWidth / 2, currentCoordinates.y, powidl::Vector3(currentValue.GetValue().y * impulseFactor, 0, 0)));
+			}
+			velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates, -currentValue.GetValue()));
 		}
-		if (x < columns - 1)
-		{
-			velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x + cellWidth / 2, currentCoordinates.y, powidl::Vector3(currentValue.GetValue().y / 2 * (isPushing ? 1 : -1), 0, 0)));
-		}
-		velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x, currentCoordinates.y, -currentValue.GetValue()));
 	}
 
 
@@ -187,34 +202,46 @@ void GridManager::computeBoundaries()
 	{
 		EmptyDataPoint<powidl::Vector3> currentValue = (*m_vector3ValueGrids.begin())->GetDataPoint(0, y);
 		Vector3 currentCoordinates = currentValue.GetCoordinates();
+		bool isCorner = y == 0 || y == rows - 1;
 
-		bool isPushing = currentValue.GetValue().x < 0;
+		if (currentValue.GetValue().x != 0)
+		{
+			bool isPushing = currentValue.GetValue().x < 0;
 
-		if (y > 0)
-		{
-			velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x, currentCoordinates.y - cellHeight / 2, powidl::Vector3(0, currentValue.GetValue().x / 2 * (isPushing ? 1 : -1), 0)));
+			float impulseFactor = (isCorner ? 0.5f : 0.25f) * (isPushing ? 1 : -1);
+			impulseFactor *= 0.99f;
+
+			if (y > 0)
+			{
+				velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x, currentCoordinates.y - cellHeight / 2, powidl::Vector3(0, currentValue.GetValue().x * impulseFactor, 0)));
+			}
+			if (y < rows - 1)
+			{
+				velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x, currentCoordinates.y + cellHeight / 2, powidl::Vector3(0, -currentValue.GetValue().x * impulseFactor, 0)));
+			}
+			velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates, -currentValue.GetValue()));
 		}
-		if (y < rows - 1)
-		{
-			velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x, currentCoordinates.y + cellHeight / 2, powidl::Vector3(0, -currentValue.GetValue().x / 2 * (isPushing ? 1 : -1), 0)));
-		}
-		velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x, currentCoordinates.y, -currentValue.GetValue()));
 
 
 		currentValue = (*m_vector3ValueGrids.begin())->GetDataPoint(columns - 1, y);
 		currentCoordinates = currentValue.GetCoordinates();
 
-		isPushing = currentValue.GetValue().x < 0;
+		if (currentValue.GetValue().x != 0)
+		{
+			bool isPushing = currentValue.GetValue().x > 0;
+			float impulseFactor = (isCorner ? 0.5f : 0.25f) * (isPushing ? 1 : -1);
+			impulseFactor *= 0.99f;
 
-		if (y > 0)
-		{
-			velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x, currentCoordinates.y - cellHeight / 2, powidl::Vector3(0, currentValue.GetValue().x / 2 * (isPushing ? 1 : -1), 0)));
+			if (y > 0)
+			{
+				velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x, currentCoordinates.y - cellHeight / 2, powidl::Vector3(0, -currentValue.GetValue().x * impulseFactor, 0)));
+			}
+			if (y < rows - 1)
+			{
+				velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x, currentCoordinates.y + cellHeight / 2, powidl::Vector3(0, currentValue.GetValue().x * impulseFactor, 0)));
+			}
+			velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates, -currentValue.GetValue()));
 		}
-		if (y < rows - 1)
-		{
-			velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x, currentCoordinates.y + cellHeight / 2, powidl::Vector3(0, -currentValue.GetValue().x / 2 * (isPushing ? 1 : -1), 0)));
-		}
-		velocitiesToAdd.push_back(EmptyDataPoint<Vector3>(currentCoordinates.x, currentCoordinates.y, -currentValue.GetValue()));
 	}
 
 	//TODO: compute corners

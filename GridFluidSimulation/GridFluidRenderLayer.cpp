@@ -11,7 +11,7 @@ using namespace std;
 using namespace powidl;
 
 GridFluidRenderLayer::GridFluidRenderLayer(const std::string& keyPath)
-	: BaseD3d11GraphicsLayer2DPlum(keyPath, Priority::LOW, "")
+	: BaseD3d11GraphicsLayer2DPlum(keyPath, Priority::LOW, ""), m_numberOfDataPoints(0)
 {
 	// Intentionally left empty
 }
@@ -23,6 +23,8 @@ void GridFluidRenderLayer::onFirstActivation()
 
 void GridFluidRenderLayer::onActivation()
 {
+	usePlum<IKeyboard>().addKeyboardListener(this);
+
 	auto& gridManager = usePlum<GridManager>();
 	size_t columns = gridManager.getColumns();
 	size_t rows = gridManager.getRows();
@@ -139,6 +141,8 @@ void GridFluidRenderLayer::onActivation()
 
 void GridFluidRenderLayer::onDeactivation()
 {
+	usePlum<IKeyboard>().removeKeyboardListener(this);
+
 	m_constantBuffer = nullptr;
 }
 
@@ -161,4 +165,18 @@ void GridFluidRenderLayer::doRender(powidl::ComPtr<ID3D11DeviceContext>& deviceC
 	m_shaderProgram->unbind(deviceContext);
 	m_shaderResourceViews.unbindVS(deviceContext);
 	m_constantBuffer->unbindVS(deviceContext);
+}
+
+bool GridFluidRenderLayer::onKeyDown(powidl::Keycode code)
+{
+	if (usePlum<IKeyboard>().isKeyPressed(Keycode::K_LEFT_CTRL))
+	{
+		if (code == Keycode::K_C) { usePlum<GridRenderer>().m_drawCoordinateSystem = !usePlum<GridRenderer>().m_drawCoordinateSystem; }
+		if (code == Keycode::K_G) { usePlum<GridRenderer>().m_drawGridLines = !usePlum<GridRenderer>().m_drawGridLines; }
+		if (code == Keycode::K_I) { usePlum<GridRenderer>().m_drawIntermediateVelocityVectors = !usePlum<GridRenderer>().m_drawIntermediateVelocityVectors; }
+		if (code == Keycode::K_O) { usePlum<GridRenderer>().m_drawOutline = !usePlum<GridRenderer>().m_drawOutline; }
+		if (code == Keycode::K_V) { usePlum<GridRenderer>().m_drawVelocityVectors = !usePlum<GridRenderer>().m_drawVelocityVectors; }
+	}
+
+	return false;
 }

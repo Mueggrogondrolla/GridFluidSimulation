@@ -43,7 +43,7 @@ public:
 		{
 			for (size_t x = 0; x < m_columns; x++)
 			{
-				storedValues.push_back(EmptyDataPoint<T>(powidl::Vector3(x * cellWidth + m_offsetX, y * cellHeight + m_offsetY, 0), x == m_columns / 2 && y == m_rows / 2 ? m_defaultValue : m_zeroValue));
+				storedValues.push_back(EmptyDataPoint<T>(powidl::Vector3(x * cellWidth + m_offsetX, y * cellHeight + m_offsetY, 0), ((x == m_columns / 2 && y == m_rows / 2) || true) ? m_defaultValue : m_zeroValue));
 			}
 		}
 	}
@@ -97,7 +97,8 @@ public:
 		{
 			for (std::size_t x = 0; x < m_columns; x++)
 			{
-				GetDataPoint(x, y).SetValue(ValueAtPosition(newValues, x, y).GetValue());
+				bool isBorderCell = x == 0 || x == m_columns - 1 || y == 0 || y == m_rows - 1;
+				GetDataPoint(x, y).SetValue(ValueAtPosition(newValues, x, y).GetValue() * (1 - m_dissipationFactor) * (isBorderCell ? (1 - m_dissipationFactor) : 1));
 			}
 		}
 	}
@@ -120,26 +121,36 @@ public:
 	{
 		float a = lastDeltaTime * m_diffusionFactor;
 
-		for (int y = 1; y < m_rows - 1; y++)
+		for (int y = 0; y < m_rows; y++)
 		{
-			for (int x = 1; x < m_columns - 1; x++)
+			for (int x = 0; x < m_columns; x++)
 			{
-				T currentValue = ValueAtPosition(newValues, x + 1, y).GetValue() * a;
-				ValueAtPosition(newValues, x, y).AddToValue(currentValue);
-				ValueAtPosition(newValues, x + 1, y).AddToValue(-currentValue);
+				if (x < m_columns - 1)
+				{
+					T currentValue = ValueAtPosition(newValues, x + 1, y).GetValue() * a;
+					ValueAtPosition(newValues, x, y).AddToValue(currentValue);
+					ValueAtPosition(newValues, x + 1, y).AddToValue(-currentValue);
+				}
+				if (x > 0)
+				{
+					T currentValue = ValueAtPosition(newValues, x - 1, y).GetValue() * a;
+					ValueAtPosition(newValues, x, y).AddToValue(currentValue);
+					ValueAtPosition(newValues, x - 1, y).AddToValue(-currentValue);
+				}
 
-				currentValue = ValueAtPosition(newValues, x - 1, y).GetValue() * a;
-				ValueAtPosition(newValues, x, y).AddToValue(currentValue);
-				ValueAtPosition(newValues, x - 1, y).AddToValue(-currentValue);
 
-
-				currentValue = ValueAtPosition(newValues, x, y + 1).GetValue() * a;
-				ValueAtPosition(newValues, x, y).AddToValue(currentValue);
-				ValueAtPosition(newValues, x, y + 1).AddToValue(-currentValue);
-
-				currentValue = ValueAtPosition(newValues, x, y - 1).GetValue() * a;
-				ValueAtPosition(newValues, x, y).AddToValue(currentValue);
-				ValueAtPosition(newValues, x, y - 1).AddToValue(-currentValue);
+				if (y < m_rows - 1)
+				{
+					T currentValue = ValueAtPosition(newValues, x, y + 1).GetValue() * a;
+					ValueAtPosition(newValues, x, y).AddToValue(currentValue);
+					ValueAtPosition(newValues, x, y + 1).AddToValue(-currentValue);
+				}
+				if (y > 0)
+				{
+					T currentValue = ValueAtPosition(newValues, x, y - 1).GetValue() * a;
+					ValueAtPosition(newValues, x, y).AddToValue(currentValue);
+					ValueAtPosition(newValues, x, y - 1).AddToValue(-currentValue);
+				}
 			}
 		}
 	}
@@ -176,7 +187,11 @@ private:
 	bool isVeloctiyGrid;
 	powidl::Vector3 velocityDirection;
 
+	// Defines, how much of a cell diffuses into neighbour cells per second
 	float m_diffusionFactor = 0.15f;
+
+	// Defines, how much per cell dissapates away per tick
+	float m_dissipationFactor = 0.0005f;
 
 	float lastDeltaTime;
 
