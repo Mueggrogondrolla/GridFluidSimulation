@@ -1,7 +1,7 @@
 # GridFluidSimulation
 
 ## Overview
-This project realises a simple, grid based version of a fluid simulation using POWIDL engine.
+This project realises a simple, grid based version of a fluid simulation using SGE, based on POWIDL.
 
 ## Current status
 At the moment, the simulation works fine so far with just a fluid being simulated and a dye, that can be dropped in to visualize current fluid movement.
