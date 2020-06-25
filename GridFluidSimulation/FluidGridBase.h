@@ -6,6 +6,7 @@
 #include <Sge.h>
 #include "EmptyDataPoint.h"
 #include "GridManager.h"
+#include "NoiseGenerator.h"
 
 using namespace std;
 
@@ -34,6 +35,8 @@ public:
 
 	void InitializeGrid()
 	{
+		NoiseGenerator noiseGenerator = NoiseGenerator();
+
 		storedValues = std::vector<EmptyDataPoint<T>>();
 
 		float cellWidth = m_width / (m_columns - 1);
@@ -43,7 +46,8 @@ public:
 		{
 			for (size_t x = 0; x < m_columns; x++)
 			{
-				storedValues.push_back(EmptyDataPoint<T>(powidl::Vector3(x * cellWidth + m_offsetX, y * cellHeight + m_offsetY, 0), ((x == m_columns / 2 && y == m_rows / 2) || true) ? m_defaultValue : m_zeroValue));
+				T currentValue = m_defaultValue * noiseGenerator.GetNoiseAt(m_offsetX + x * cellWidth * 100, m_offsetY + y * cellHeight * 100, 10);
+				storedValues.push_back(EmptyDataPoint<T>(powidl::Vector3(x * cellWidth + m_offsetX, y * cellHeight + m_offsetY, 0), currentValue));
 			}
 		}
 	}

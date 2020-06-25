@@ -14,12 +14,11 @@ GridRenderer::GridRenderer(const std::string& keyPath, const std::string& timeli
 
 void GridRenderer::onFirstActivation()
 {
-	addChild(usePlum<ILineRenderer2DFactory>("FAST").createLineRenderer());
+	auto& gridManager = usePlum<GridManager>();
+	size_t columns = gridManager.getColumns();
+	size_t rows = gridManager.getRows();
 
-	auto& scene = usePlum<ISpriteSceneGraph2D>();
-	cellContentsSpriteNode = SpriteNode2DBuilder(*this).build();
-
-	scene.addNode(cellContentsSpriteNode);
+	addChild(usePlum<ILineRenderer2DFactory>("FAST").createLineRenderer(Priority::NORMAL, columns * rows + columns + rows + 100));
 }
 
 void GridRenderer::onActivation()

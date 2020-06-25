@@ -5,7 +5,7 @@ using namespace std;
 using namespace powidl;
 
 GridManager::GridManager(size_t columns, size_t rows, float width, float height, float offsetX, float offsetY, const std::string& keyPath, const std::string& timelineName)
-	: UpdatableKeyPlum(keyPath), m_timelineName(timelineName), m_isRunning(false)
+	: UpdatableKeyPlum(keyPath), m_timelineName(timelineName)
 {
 	InitializeGrids(columns, rows, width, height, offsetX, offsetY);
 }
@@ -15,14 +15,10 @@ void GridManager::InitializeGrids(size_t columns, size_t rows, float width, floa
 	float cellWidth = width / columns;
 	float cellHeight = height / rows;
 
-	m_center = Vector2(offsetX + width / 2, offsetY + height / 2);
+	m_floatValueGrids.push_back(make_shared<FluidGridBase<float>>(columns, rows, width - cellWidth, height - cellHeight, 0.9f, 0.0f, this, offsetX + cellWidth / 2, offsetY + cellHeight / 2));
 
-	m_floatValueGrids.push_back(make_shared<FluidGridBase<float>>(columns, rows, width - cellWidth, height - cellHeight, 0.1f, 0.0f, this, offsetX + cellWidth / 2, offsetY + cellHeight / 2));
-
-	m_vector3ValueGrids.push_back(make_shared<FluidGridBase<powidl::Vector3>>(columns + 1, rows, width, height - cellHeight, Vector3(0, 0, 0), Vector3(0, 0, 0), this, offsetX, offsetY + cellHeight / 2, true, powidl::Vector3(1, 0, 0))); // X velocities
-	m_vector3ValueGrids.push_back(make_shared<FluidGridBase<powidl::Vector3>>(columns, rows + 1, width - cellWidth, height, Vector3(0, 0, 0), Vector3(0, 0, 0), this, offsetX + cellWidth / 2, offsetY, true, powidl::Vector3(0, 1, 0))); // Y velocities
-
-	//AddVelocity(m_center.x, m_center.y, Vector3(0, 100, 0));
+	m_vector3ValueGrids.push_back(make_shared<FluidGridBase<powidl::Vector3>>(columns + 1, rows, width, height - cellHeight, Vector3(1, 0, 0), Vector3(0, 0, 0), this, offsetX, offsetY + cellHeight / 2, true, powidl::Vector3(1, 0, 0))); // X velocities
+	m_vector3ValueGrids.push_back(make_shared<FluidGridBase<powidl::Vector3>>(columns, rows + 1, width - cellWidth, height, Vector3(0, 1, 0), Vector3(0, 0, 0), this, offsetX + cellWidth / 2, offsetY, true, powidl::Vector3(0, 1, 0))); // Y velocities
 }
 
 
@@ -50,6 +46,8 @@ void GridManager::update()
 
 	if (m_isRunning)
 	{
+		Vector2 m_center = Vector2(GetOffsetX() + GetWidth() / 2, GetOffsetY() + GetHeight() / 2);
+
 		AddVelocity(m_center.x, m_center.y, shootDirection);
 		AddDye(m_center.x, m_center.y, 2);
 
@@ -370,4 +368,19 @@ Vector3 GridManager::GetVelocityAtCoordinate(Vector3 coordinates)
 		m_vector3ValueGrids.front()->GetDataPointAtCoordinate(coordinates).GetValue().x,
 		m_vector3ValueGrids[1]->GetDataPointAtCoordinate(coordinates).GetValue().y,
 		0);
+}
+
+float GridManager::GetDensityAtCoordinate(float x, float y, float z)
+{
+	return GetDensityAtCoordinate(Vector3(x, y, z));
+}
+
+float GridManager::GetDensityAtCoordinate(powidl::Vector2 coordinates)
+{
+	return GetDensityAtCoordinate(Vector3(coordinates.x, coordinates.y, 0));
+}
+
+float GridManager::GetDensityAtCoordinate(powidl::Vector3 coordinates)
+{
+	return m_floatValueGrids.front()->GetDataPointAtCoordinate(coordinates).GetValue();
 }

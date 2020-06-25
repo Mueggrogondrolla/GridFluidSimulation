@@ -72,6 +72,9 @@
     <ClCompile Include="GridFluidRenderLayer.cpp">
       <Filter>Source Files\Grid\GridHelpers</Filter>
     </ClCompile>
+    <ClCompile Include="NoiseGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridRenderer.h">
@@ -112,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="GridFluidRenderLayer.h">
       <Filter>Header Files\Grid\GridHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="NoiseGenerator.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

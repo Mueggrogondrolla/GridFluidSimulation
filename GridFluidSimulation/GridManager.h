@@ -41,6 +41,10 @@ public:
 	powidl::Vector3 GetVelocityAtCoordinate(powidl::Vector2 coordinates);
 	powidl::Vector3 GetVelocityAtCoordinate(powidl::Vector3 coordinates);
 
+	float GetDensityAtCoordinate(float x, float y, float z);
+	float GetDensityAtCoordinate(powidl::Vector2 coordinates);
+	float GetDensityAtCoordinate(powidl::Vector3 coordinates);
+
 	void AdvectAll();
 
 	void AddDye(float x, float y, float amount);
@@ -52,6 +56,8 @@ public:
 
 	void Reset();
 
+	const int SUBSTEP_SIZE = 5;
+
 private:
 	/** The name of the timeline used by this Plum. */
 	std::string m_timelineName;
@@ -59,12 +65,11 @@ private:
 	/** The timeline used by this Plum. */
 	std::shared_ptr<powidl::ITimeline> m_timeline;
 
-	bool m_isRunning;
-
 	float maxDeltaTime = 0.2f;
 
-	powidl::Vector2 m_center;
 	float m_time = 0;
+
+	bool m_isRunning = false;
 
 
 	/**

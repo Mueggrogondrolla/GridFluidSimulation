@@ -48,7 +48,7 @@ private:
 	bool m_drawGridLines = false;
 	bool m_drawPressurePoints = false;
 	bool m_drawVelocityVectors = false;
-	bool m_drawIntermediateVelocityVectors = true;
+	bool m_drawIntermediateVelocityVectors = false;
 	bool m_drawCoordinateSystem = false;
 
 	float m_time = 0;

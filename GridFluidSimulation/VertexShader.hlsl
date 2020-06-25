@@ -8,7 +8,9 @@ cbuffer PerObjectConstantBuffer : register(b0)
 {
 	matrix worldViewProjection;
 	float time;
-	int columns;
+	float fogColorR;
+	float fogColorG;
+	float fogColorB;
 };
 
 struct VS_INPUT
@@ -29,19 +31,21 @@ VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
 
+	int index = input.vTexUV.z;
+
 	output.position = mul(float4(input.vPos.x + input.vTexUV.x, input.vPos.y + input.vTexUV.y, 1, 1), worldViewProjection);
 	//output.texUV = input.vTexUV;
 
 	//output.color = float4(input.vColor.r * sin(time) / 2 + 0.5, input.vColor.g * cos(time) / 2 + 0.5, input.vColor.b, input.vColor.a);
 
-	float density = densities[input.vTexUV.z];
+	float density = densities[index];
 
 	float blurFactor = 0;
 
 	density *= 1;
-	density += (densities[input.vTexUV.z - 1] + densities[input.vTexUV.z + 1] + densities[input.vTexUV.z - columns] + densities[input.vTexUV.z + columns]) * blurFactor;
+	//density += (densities[index - 1] + densities[index + 1] + densities[index - columns] + densities[index + columns]) * blurFactor;
 
-	output.color = float4(density, density, density, 1);
+	output.color = float4(fogColorR, fogColorG, fogColorB, density);
 
 	return output;
 }

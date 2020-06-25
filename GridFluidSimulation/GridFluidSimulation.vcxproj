@@ -175,6 +175,7 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NoiseGenerator.cpp" />
     <ClCompile Include="RenderData.cpp">
       <SubType>
       </SubType>
@@ -204,6 +205,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="NoiseGenerator.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="RenderData.h">
       <SubType>

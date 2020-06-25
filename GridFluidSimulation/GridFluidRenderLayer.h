@@ -35,7 +35,9 @@ private:
 	{
 		DirectX::XMFLOAT4X4 m_worldViewProjection;
 		float totalTime;
-		int columns;
+		float fogColorR;
+		float fogColorG;
+		float fogColorB;
 	};
 
 	std::shared_ptr<powidl::D3d11ConstantBuffer<ConstantBufferData>> m_constantBuffer;
@@ -45,6 +47,6 @@ private:
 	std::shared_ptr<RenderData> m_renderData;
 	powidl::D3d11ShaderResourceViewGroup m_shaderResourceViews;
 
-	std::size_t m_numberOfDataPoints;
+	void changeColor(powidl::Color color);
 };
 

@@ -20,7 +20,7 @@ void TestGridRenderState::onFirstActivation()
 
 	//addChild(make_shared<GridManager>(10, 10, 800.0f, 800.0f, -400.0f, -400.0f));
 	//addChild(make_shared<GridManager>(384, 216, 1920.0f, 1080.0f, -960.0f, -540.0f));
-	addChild(make_shared<GridManager>(384, 216, 19.2f, 10.8f, -9.6f, -5.4f));
+	addChild(make_shared<GridManager>(192, 108, 19.2f, 10.8f, -9.6f, -5.4f));
 
 	addChild(make_shared<RenderData>());
 
@@ -32,9 +32,7 @@ void TestGridRenderState::onActivation()
 	usePlum<IKeyboard>().addKeyboardListener(this);
 	usePlum<IMouse>().addMouseListener(this);
 
-	//usePlum<Camera2DControlPlum>().setHomeZoomLevel(5);
-	//usePlum<Camera2DControlPlum>().setZoomLevel(5);
-	usePlum<Camera2DControlPlum>().setZoom(80);
+	usePlum<Camera2DControlPlum>().setZoom(100);
 }
 
 void TestGridRenderState::onDeactivation()

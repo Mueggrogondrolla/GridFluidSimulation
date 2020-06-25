@@ -11,7 +11,7 @@ using namespace std;
 using namespace powidl;
 
 GridFluidRenderLayer::GridFluidRenderLayer(const std::string& keyPath)
-	: BaseD3d11GraphicsLayer2DPlum(keyPath, Priority::LOW, ""), m_numberOfDataPoints(0)
+	: BaseD3d11GraphicsLayer2DPlum(keyPath, Priority::LOW, "")
 {
 	// Intentionally left empty
 }
@@ -33,80 +33,40 @@ void GridFluidRenderLayer::onActivation()
 	float offsetX = gridManager.GetOffsetX();
 	float offsetY = gridManager.GetOffsetY();
 
-	m_numberOfDataPoints = columns * rows;
-
 	m_renderData = getPlum<RenderData>();
 
-	/** Indexed mesh
-	mesh = SimplePlane2DMesh();
-
-	for (size_t y = 0; y < rows; y++)
-	{
-		for (size_t x = 0; x < columns; x++)
-		{
-			mesh.AddTriangle(SimpleTriangle(
-				SimpleVertex(x * cellWidth + offsetX, y * cellHeight + offsetY, powidl::Color::fromRGB(x, y, 0)),
-				SimpleVertex(x * cellWidth + offsetX + cellWidth, y * cellHeight + offsetY, powidl::Color::fromRGB(x, y, 0)),
-				SimpleVertex(x * cellWidth + offsetX, y * cellHeight + offsetY + cellHeight, powidl::Color::fromRGB(x, y, 0))
-				));
-
-			mesh.AddTriangle(SimpleTriangle(
-				SimpleVertex(x * cellWidth + offsetX, y * cellHeight + offsetY + cellHeight, powidl::Color::fromRGB(x, y, 0)),
-				SimpleVertex(x * cellWidth + offsetX + cellWidth, y * cellHeight + offsetY + cellHeight, powidl::Color::fromRGB(x, y, 0)),
-				SimpleVertex(x * cellWidth + offsetX + cellWidth, y * cellHeight + offsetY, powidl::Color::fromRGB(x, y, 0))
-				));
-		}
-	}
-
 	auto device = usePlum<IDirect3D11>().getD3dDevice();
+	vector<float> vertexDataQuadHalfed = {
+		0,										0,
+		0,										cellHeight / gridManager.SUBSTEP_SIZE,
+		cellWidth / gridManager.SUBSTEP_SIZE,	0,
 
-	m_vertexBuffer = move(D3d11VertexBufferBuilder()
-		.immutable(false)
-		.updatable(true)
-		.vertexLength(6)
-		.build(device, mesh.GetFloatValues()));
-
-	auto indices = D3d11IndexBufferBuilder()
-		.immutable(true)
-		.build(device, mesh.GetIndices());
-
-	m_mesh = std::make_shared<D3d11MeshIndexed>(m_vertexBuffer, move(indices));
-	m_mesh->setTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	m_shaderProgram = D3d11ShaderProgramBuilder()
-		.inputLayout(D3d11VertexInfo()
-			.addAttribute(D3d11VertexAttribute::createFloat2("POSITION", 0))
-			.addAttribute(D3d11VertexAttribute::createFloat4("COLOR", 0))
-			.createInputLayout(device, dataVertexShader, sizeof(dataVertexShader)))
-		.vertexShader(createVertexShader(device, VertexShader))
-		.pixelShader(createPixelShader(device, PixelShader))
-		.build();
-	*/
-
-	auto device = usePlum<IDirect3D11>().getD3dDevice();
-
-	vector<float> vertexData = { 
-		offsetX,				offsetY, 
-		offsetX,				offsetY + cellHeight, 
-		offsetX + cellWidth,	offsetY, 
-
-		offsetX + cellWidth,	offsetY, 
-		offsetX,				offsetY + cellHeight, 
-		offsetX + cellWidth,	offsetY + cellHeight };
+		cellWidth / gridManager.SUBSTEP_SIZE,	0,
+		0,										cellHeight / gridManager.SUBSTEP_SIZE,
+		cellWidth / gridManager.SUBSTEP_SIZE,	cellHeight / gridManager.SUBSTEP_SIZE
+	};
 
 	auto verticesSingleQuad = D3d11VertexBufferBuilder()
 		.immutable(true)
 		.vertexLength(2)
-		.build(device, vertexData);
+		.build(device, vertexDataQuadHalfed);
+
+	size_t index = 0;
 
 	vector<float> coordinatesData = vector<float>();
 	for (size_t y = 0; y < rows; y++)
 	{
 		for (size_t x = 0; x < columns; x++)
 		{
-			coordinatesData.push_back(x * cellWidth);
-			coordinatesData.push_back(y * cellHeight);
-			coordinatesData.push_back(x + y * columns);
+			for (size_t subStepY = 0; subStepY < gridManager.SUBSTEP_SIZE; subStepY++)
+			{
+				for (size_t subStepX = 0; subStepX < gridManager.SUBSTEP_SIZE; subStepX++)
+				{
+					coordinatesData.push_back(offsetX + x * cellWidth + subStepX * cellWidth / gridManager.SUBSTEP_SIZE);
+					coordinatesData.push_back(offsetY + y * cellHeight + subStepY * cellHeight / gridManager.SUBSTEP_SIZE);
+					coordinatesData.push_back((x + y * columns) * gridManager.SUBSTEP_SIZE * gridManager.SUBSTEP_SIZE + gridManager.SUBSTEP_SIZE * subStepY + subStepX);
+				}
+			}
 		}
 	}
 
@@ -134,7 +94,7 @@ void GridFluidRenderLayer::onActivation()
 		.cpuWrite(true)
 		.build(device);
 
-	m_constantBuffer->getData().columns = columns;
+	changeColor(StandardColors::RED);
 
 	m_shaderResourceViews.addSRV(m_renderData->getShaderResourceView());
 }
@@ -178,5 +138,17 @@ bool GridFluidRenderLayer::onKeyDown(powidl::Keycode code)
 		if (code == Keycode::K_V) { usePlum<GridRenderer>().m_drawVelocityVectors = !usePlum<GridRenderer>().m_drawVelocityVectors; }
 	}
 
+	if (code == Keycode::K_F)
+	{
+		changeColor(Color::fromRGB(rand() % 256, rand() % 256, rand() % 256, 255));
+	}
+
 	return false;
+}
+
+void GridFluidRenderLayer::changeColor(Color color)
+{
+	m_constantBuffer->getData().fogColorR = color.r;
+	m_constantBuffer->getData().fogColorG = color.g;
+	m_constantBuffer->getData().fogColorB = color.b;
 }
