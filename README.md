@@ -33,3 +33,4 @@ Some things to watch out for:
 - CTRL + V: toggle drawing of the real stored velocity vectors
 - CTRL + I: toggle drawing of the velocites at grid cell centers
 - CTRL + O: toggle drawing of the grid outline (if grid lines are not drawn anyway)
+- F: change the fog color to a random new one
